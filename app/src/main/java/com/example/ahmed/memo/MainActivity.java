@@ -680,6 +680,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(View v) {
                             adForOptionsMenu.dismiss();
+                            shareText();
                         }
                     });
 
@@ -694,6 +695,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             createAlert(e.getMessage().toString());
         }
+    }
+
+    private void shareText() {
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        //intent.putExtra(Intent.EXTRA_SUBJECT, );
+        intent.putExtra(Intent.EXTRA_TEXT, this.noteBody);
+        startActivity(Intent.createChooser(intent, null));
+
+
     }
 
 

@@ -421,7 +421,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void addNewMemoItem2() {
 
-        //setCustomViewForActionBar();
+
+        View view = getSupportActionBar().getCustomView();
+        ivAddNewNote = (ImageView) view.findViewById(R.id.ivAddOrBack);
+        ivAddNewNote.setImageResource(R.mipmap.ic_action_back);
+        ivAddNewNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etWritingNotes.getText().toString().trim().length() == 0){
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }else{
+                    noteBody = etWritingNotes.getText().toString();
+                    saveAndAddSticky();
+                    //add this stick note to the main view
+                    addStickyNoteToMainView();//refresh the da
+                    id = 0;
+                }
+            }
+        });
 
         setContentView(R.layout.add_new_xml);
 
@@ -434,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         etWritingNotes = (EditText) findViewById(R.id.etWritingNotes);
         etWritingNotes.requestFocus();//for showing the soft  input
-
+        
 
     }
 
@@ -723,7 +742,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setMax(max);
         seekBar.setProgress(seekBar.getMax() / 2);
-        seekBar.setRotation(90f);
+        //seekBar.setRotation(90f);
         //seekBar.setMinimumHeight(getWindowManager().getDefaultDisplay().getHeight() / 2);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

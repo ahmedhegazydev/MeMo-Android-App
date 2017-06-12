@@ -1,5 +1,6 @@
 package com.example.ahmed.memo;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,6 +39,7 @@ import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -428,15 +431,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ivAddNewNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etWritingNotes.getText().toString().trim().length() == 0){
+                if (etWritingNotes.getText().toString().trim().length() == 0) {
                     Intent intent = getIntent();
                     finish();
                     startActivity(intent);
-                }else{
+                } else {
                     noteBody = etWritingNotes.getText().toString();
                     saveAndAddSticky();
                     //add this stick note to the main view
-                    addStickyNoteToMainView();//refresh the da
+                    //addStickyNoteToMainView();//refresh the da
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
                     id = 0;
                 }
             }
@@ -453,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         etWritingNotes = (EditText) findViewById(R.id.etWritingNotes);
         etWritingNotes.requestFocus();//for showing the soft  input
-        
+
 
     }
 
@@ -693,6 +699,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onClick(View v) {
                             adForOptionsMenu.dismiss();
+                            remindMe();
                         }
                     });
                     view.findViewById(R.id.opt2Share).setOnClickListener(new View.OnClickListener() {
@@ -716,8 +723,87 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void shareText() {
+    TimePicker timePicker = null;
+    Button btnDate = null;
+    String format = null;
+    StringBuilder time = null;
 
+    private void remindMe() {
+
+        LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        ///////////////////////////////////
+
+        btnDate = new Button(context);
+        btnDate.setText(new SimpleDateFormat("yyyy/MM/dd").format(new Date()).toString());
+        btnDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+                        btnDate.setText(new StringBuilder().append(year+"/").append(month+"/").append(dayOfMonth+""));
+                    }
+                },
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                ).show();
+
+            }
+        });
+        timePicker = new TimePicker(context);
+
+        linearLayout.addView(btnDate);
+        linearLayout.addView(timePicker);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("set the time to remind me");
+        builder.setView(linearLayout);
+        builder.setNegativeButton("Remove", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+
+            }
+        });
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int hour = timePicker.getCurrentHour();
+                int min = timePicker.getCurrentMinute();
+
+                if (hour == 0) {
+                    hour += 12;
+                    format = "AM";
+                } else if (hour == 12) {
+                    format = "PM";
+                } else if (hour > 12) {
+                    hour -= 12;
+                    format = "PM";
+                } else {
+                    format = "AM";
+                }
+
+                time = new StringBuilder().append(hour).append(" : ").append(min)
+                        .append(" ").append(format);
+
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        if (!alertDialog.isShowing()) {
+            alertDialog.show();
+        } else {
+            return;
+        }
+
+
+    }
+
+    private void shareText() {
+        createShortToast(noteBody);
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         //intent.putExtra(Intent.EXTRA_SUBJECT, );
@@ -836,10 +922,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     View view = getLayoutInflater().inflate(R.layout.existing_notes, null);
                     View view2 = view.findViewById(R.id.llBla1);
-                    view2.setOnClickListener(myClickLit);
-                    view2.setTag(id + "");
+                    //view2.setOnClickListener(myClickLit);
+                    //view2.setTag(id + "");
 
                     TextView tvBody = (TextView) view2.findViewById(R.id.tvBody);
+                    tvBody.setOnClickListener(myClickLit);
+                    tvBody.setTag(id + "");
+
                     TextView tvDate = (TextView) view2.findViewById(R.id.tvDate);
 
                     tvBody.setText(text);
@@ -865,6 +954,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 id = 1;
                 //get the id from the selevted view tag to get the content from the database
                 idForDb = v.getTag().toString();
+                noteBody = ((TextView) v).getText().toString();
                 updateSelectedNote();
 
 //                hashMaps = DbController.getData("select * from " + db.DbController.tblNotes + " where " + db.DbController.noteId + " = '" + idForDb + "' ");

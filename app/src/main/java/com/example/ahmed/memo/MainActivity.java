@@ -302,11 +302,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     for (int i = 0; i < idsToDelete.size(); i++) {
                         DbController.exeQuery("delete from " + db.DbController.tblNotes + " where " + db.DbController.noteId + "  = '" + idsToDelete.get(i).toString() + "' ");
                     }
+                    Snackbar.make(relativeLayout,
+                            countToDelete==1?" one item deleted":countToDelete+" items deleted",
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                    countToDelete = 0;
                 } else {
 
                 }
                 llDeletion.setVisibility(View.GONE);
                 addStickyNoteToMainView();
+
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -607,13 +613,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     ArrayList<String> idsToDelete = new ArrayList<String>();
-
+    int countToDelete = 0;
     CheckBox.OnCheckedChangeListener checkedChangeListener = new CheckBox.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
                 //add the selected id
                 idsToDelete.add(buttonView.getTag().toString());
+                countToDelete++;
             } else {
                 //delete the id from arraylist as the cb is not selected
                 if (!idsToDelete.isEmpty()) {
@@ -623,6 +630,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                 }
+                countToDelete--;
             }
         }
 
@@ -726,7 +734,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TimePicker timePicker = null;
     Button btnDate = null;
     String format = null;
-    StringBuilder time = null;
+    StringBuilder time = null, date = new StringBuilder(new SimpleDateFormat("yyyy/MM/dd").format(new Date()).toString());//by default
 
     private void remindMe() {
 
@@ -735,15 +743,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ///////////////////////////////////
 
         btnDate = new Button(context);
-        btnDate.setText(new SimpleDateFormat("yyyy/MM/dd").format(new Date()).toString());
+        btnDate.setText(date);
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-                        btnDate.setText(new StringBuilder().append(year+"/").append(month+"/").append(dayOfMonth+""));
+                        date = new StringBuilder().append(dayOfMonth+"/").append((month+1)+"/").append(year+"");
+                        btnDate.setText(date.toString());
                     }
                 },
                         calendar.get(Calendar.YEAR),
@@ -788,6 +796,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 time = new StringBuilder().append(hour).append(" : ").append(min)
                         .append(" ").append(format);
+
 
             }
         });

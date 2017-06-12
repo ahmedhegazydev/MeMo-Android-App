@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView ivSearch = null;
     LinearLayout view1 = null;
     ImageView ivAddNewNote = null;
+
     private void setCustomViewForActionBar() {
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final View view = getSupportActionBar().getCustomView();
 
 
-         ivAddNewNote = (ImageView) view.findViewById(R.id.ivAddOrBack);
+        ivAddNewNote = (ImageView) view.findViewById(R.id.ivAddOrBack);
         TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
         view1 = (LinearLayout) view.findViewById(R.id.llActionBar);
         ivSearch = (ImageView) view.findViewById(R.id.ivSearchFor);
@@ -186,13 +188,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
 
                 try {
-                    if (toggle2 == true){
+                    if (toggle2 == true) {
                         addNewMemoItem2();
                         ivAddNewNote.setImageResource(R.mipmap.ic_action_back);
                         id = 1;
                         toggle2 = false;
                         //createShortToast("1");
-                    }else{
+                    } else {
                         String s = etWritingNotes.getText().toString();
                         if (s.toString().trim().length() != 0) {
                             noteBody = s;
@@ -211,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         toggle2 = true;
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     //createAlert(e.getMessage().toString());
                     //finish();
                 }
@@ -281,7 +283,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
 
 
     private void initLayoutDeletion() {
@@ -420,25 +421,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void addNewMemoItem2() {
 
-            //setCustomViewForActionBar();
+        //setCustomViewForActionBar();
 
-            setContentView(R.layout.add_new_xml);
+        setContentView(R.layout.add_new_xml);
 
-            ImageView ivColoringEditText = (ImageView) findViewById(R.id.ivColorEditText);
-            ivColoringEditText.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    createListOfColors(strings);
-                }
-            });
-            etWritingNotes = (EditText) findViewById(R.id.etWritingNotes);
-            etWritingNotes.requestFocus();//for showing the soft  input
-
+        ImageView ivColoringEditText = (ImageView) findViewById(R.id.ivColorEditText);
+        ivColoringEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createListOfColors(strings);
+            }
+        });
+        etWritingNotes = (EditText) findViewById(R.id.etWritingNotes);
+        etWritingNotes.requestFocus();//for showing the soft  input
 
 
     }
 
     boolean toggle2 = true;
+
     private void updateSelectedNote() {
 
         if (bo2) {
@@ -490,8 +491,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //editting the seleted sticky note
                     sql = "update " + db.DbController.tblNotes +
                             " set " +
-                            DBController.noteBody + " = '" + etWritingNotes.getText().toString() +"', "+
-                            DBController.noteColor+" = '"+noteColor+"' "+
+                            DBController.noteBody + " = '" + etWritingNotes.getText().toString() + "', " +
+                            DBController.noteColor + " = '" + noteColor + "' " +
                             "where " +
                             db.DbController.noteId + " =   '" + idForDb + "' ";
                     DbController.exeQuery(sql);
@@ -499,8 +500,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
                     Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
+                    finish();
+                    startActivity(intent);
 
 
                 }
@@ -696,6 +697,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    int max = 100, min = 20;
+
     private void changeFontSize() {
 
 //        try {
@@ -704,21 +707,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            seekBar.setOnSeekBarChangeListener(this);
 
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setView(new SeekBar(context));
+        SeekBar seekBar = new SeekBar(context);
+        seekBar.setOnSeekBarChangeListener(this);
+        seekBar.setMax(max);
+        seekBar.setProgress(seekBar.getMax() / 2);
+        seekBar.setRotation(90f);
+        //seekBar.setMinimumHeight(getWindowManager().getDefaultDisplay().getHeight() / 2);
 
-            AlertDialog alertDialog = builder.create();
-            if (!alertDialog.isShowing())
-                alertDialog.show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(seekBar);
+
+        AlertDialog alertDialog = builder.create();
+
+        //Grab the window of the dialog, and change the width
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        Window window = alertDialog.getWindow();
+        lp.copyFrom(window.getAttributes());
+        //This makes the dialog take up the full width
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        window.setAttributes(lp);
+
+        if (!alertDialog.isShowing())
+            alertDialog.show();
 
 
-
-
-
-//        }catch (Exception e){
-//            //e.printStackTrace();
-//            Log.e("Ahmed", e.getMessage().toString());
-//        }
     }
 
     private void addNewMemoItem() {
@@ -780,7 +793,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             sql = "select * from " + db.DbController.tblNotes;
             //createShortToast(sql);
             hashMaps = DbController.getData(sql);
-           // createAlert(hashMaps.toString());
+            // createAlert(hashMaps.toString());
             if (!hashMaps.isEmpty()) {
                 for (int i = 0; i < hashMaps.size(); i++) {
                     HashMap<String, String> hashMap = hashMaps.get(i);
@@ -791,7 +804,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //final int fontSize = Integer.parseInt(hashMap.get(DbController.noteFontSize));
 
                     View view = getLayoutInflater().inflate(R.layout.existing_notes, null);
-                    View view2  = view.findViewById(R.id.llBla1);
+                    View view2 = view.findViewById(R.id.llBla1);
                     view2.setOnClickListener(myClickLit);
                     view2.setTag(id + "");
 
@@ -885,6 +898,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     Calendar calendar = Calendar.getInstance();
+
     private void saveAndAddSticky() {
 
         Date date = new Date();
@@ -906,7 +920,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //createAlert(sql);
             //DbController.insertDataInDb(s, color, Calendar.getInstance().getTime().toString(), etWritingNotes.getTextSize() + "");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             //createAlert(e.getMessage().toString());
         }
 
@@ -998,12 +1012,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onBackPressed() {
-        if (true){
+        if (true) {
             finish();
-        }else {
+        } else {
             super.onBackPressed();
         }
-
 
 
     }
@@ -1019,8 +1032,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        if (progress <= 70 && progress >= 10) {
-            this.etWritingNotes.setTextSize(TypedValue.COMPLEX_UNIT_SP, progress);
+        if (progress <= max && progress >= min) {
+            this.etWritingNotes.setTextSize(TypedValue.COMPLEX_UNIT_PX, progress);
         }
     }
 

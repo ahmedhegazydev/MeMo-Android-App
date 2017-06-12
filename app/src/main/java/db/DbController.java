@@ -1,0 +1,124 @@
+package db;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.widget.Toast;
+
+
+
+public class DbController extends SQLiteOpenHelper{
+
+
+    public static final String dbMemos = "dbAhmed"; // Dtabasename
+
+
+    public static final String tblNotes = "tblStickyNotes";// tablename Notes
+
+    public static final String noteId = "noteId"; // auto generated ID column
+    public static final String noteBody = "noteBody";//the text insides the sticky
+    public static final String noteColor = "noteColor";//the color of the sticky
+    public static final String noteDate = "noteDate";//the time of the sticky
+    public static final String noteFontSize = "noteFontSize";//the font size  of the sticky
+
+    public static final int versioncode = 6; // versioncode of the database start from >= 1
+
+
+    String[] statements = new String[]{
+
+    };
+    String[] tableNames = new String[]{tblNotes};
+
+
+    // constructor
+    public DbController(Context context) {
+        super(context, dbMemos, null, versioncode);
+
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase database) {
+        database.execSQL(//Personal  Details Table
+                "CREATE TABLE IF NOT EXISTS "
+                        + tblNotes + "(" +
+                        this.noteId + " integer primary key, " +
+                        this.noteBody + " text, " +
+                        this.noteColor + " text, " +
+                        this.noteDate + " text, " +
+                        this.noteFontSize + " text " +
+
+                        ")"
+        );
+
+    }
+
+
+    public long insertDataInDb(String noteBody, String noteColor, String noteDate, String noteFontSize){
+        long l = 0;
+
+            SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(this.noteBody, noteBody);
+            contentValues.put(this.noteColor, noteColor);
+            contentValues.put(this.noteDate, noteDate);
+            contentValues.put(this.noteFontSize, noteFontSize);
+            l = sqLiteDatabase.insert(this.tblNotes, null, contentValues);
+
+        return l;
+    }
+
+
+    @Override
+    public void onUpgrade(SQLiteDatabase database, int version_old, int current_version) {
+        database.execSQL("DROP TABLE IF EXISTS " + tblNotes);
+        onCreate(database);
+
+    }
+
+
+    public boolean exeQuery(String sql) {
+        try {
+            SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+            sqLiteDatabase.execSQL(sql);
+            return true;
+        } catch (SQLException e) {
+            return false;
+
+        }
+
+    }
+
+
+    public ArrayList<HashMap<String, String>> getData(String selectQuery) {
+        ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String, String>>();
+        SQLiteDatabase database = this.getWritableDatabase();
+        Cursor cursor = database.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put(this.noteId, cursor.getString(0));
+                map.put(this.noteBody, cursor.getString(1));
+                map.put(this.noteColor, cursor.getString(2));
+                map.put(this.noteDate, cursor.getString(3));
+                map.put(this.noteFontSize, cursor.getString(4));
+
+                arrayList.add(map);
+            } while (cursor.moveToNext());
+        }
+        // return contact list
+        return arrayList;
+    }
+
+
+}
+
+
+

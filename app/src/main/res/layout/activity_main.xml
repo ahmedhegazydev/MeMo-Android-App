@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ahmed.memo.MainActivity"
+    android:id="@+id/rlMainView"
+    >
+
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:orientation="vertical"
+       android:weightSum="100"
+       >
+
+       <ScrollView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_weight="80"
+           >
+
+           <LinearLayout
+               android:orientation="vertical"
+               android:id="@+id/llExistingNotes"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+
+               >
+
+           </LinearLayout>
+
+       </ScrollView>
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:visibility="gone"
+           android:weightSum="100"
+           android:orientation="horizontal"
+           android:layout_weight="20"
+           android:id="@+id/llDelete"
+           >
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="Delete"
+               android:layout_weight="50"
+               android:id="@+id/btnDelete"
+               android:textSize="15sp"
+               android:textStyle="bold"
+               android:textAllCaps="true"
+               android:background="@color/colorAccent"
+
+
+
+               />
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="Cancel"
+               android:layout_weight="50"
+               android:id="@+id/btnCancel"
+               android:textSize="15sp"
+               android:textStyle="bold"
+               android:textAllCaps="true"
+
+
+               />
+       </LinearLayout>
+
+
+   </LinearLayout>
+
+
+</RelativeLayout>

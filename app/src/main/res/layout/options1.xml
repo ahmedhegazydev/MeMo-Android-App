@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20sp"
+        android:text="New note"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#FFDD"
+        android:id="@+id/opt1NewNote"
+        android:layout_margin="3dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20sp"
+        android:text="Delete"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#FFDD"
+        android:id="@+id/opt1Del"
+        android:layout_margin="3dp"
+
+        />
+
+</LinearLayout>

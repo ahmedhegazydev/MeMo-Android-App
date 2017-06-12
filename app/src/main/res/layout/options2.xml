@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20sp"
+        android:text="New note"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#FFDD"
+        android:id="@+id/opt2NewNote"
+        android:layout_margin="3dp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20sp"
+        android:text="Font size"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#FFDD"
+        android:id="@+id/opt2FontSzie"
+        android:layout_margin="3dp"
+
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20sp"
+        android:text="Share"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#FFDD"
+        android:id="@+id/opt2Share"
+        android:layout_margin="3dp"
+
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold|italic"
+        android:textSize="20sp"
+        android:text="Remind me"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#FFDD"
+        android:id="@+id/opt2Remind"
+        android:layout_margin="3dp"
+
+        />
+
+</LinearLayout>

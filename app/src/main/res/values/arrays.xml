@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string-array name="color_list">
+        <item >#FFFFFF</item>
+        <item>#FFDDEE</item>
+        <item>#DDFFEE</item>
+        <item>#AAFFEE</item>
+        <item>#CCDEDE</item>
+        <item>#FFDADA</item>
+        <item>#AAFFEC</item>
+        <item>#DDDDDD</item>
+        <item>#EEEEAA</item>
+        <item>#AFAFAF</item>
+        <item>#DADAEF</item>
+
+    </string-array>
+
+</resources>

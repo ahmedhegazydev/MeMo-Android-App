@@ -8,7 +8,7 @@
 
 
     <LinearLayout
-        android:id="@+id/ll2"
+        android:id="@+id/llColorAndDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -21,7 +21,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/paint"
             android:layout_margin="5dp"
-
             />
 
     </LinearLayout>

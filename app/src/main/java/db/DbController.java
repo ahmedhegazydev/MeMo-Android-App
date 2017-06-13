@@ -14,8 +14,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.widget.Toast;
 
 
-
-public class DbController extends SQLiteOpenHelper{
+public class DbController extends SQLiteOpenHelper {
 
 
     public static final String dbMemos = "dbAhmed"; // Dtabasename
@@ -26,10 +25,12 @@ public class DbController extends SQLiteOpenHelper{
     public static final String noteId = "noteId"; // auto generated ID column
     public static final String noteBody = "noteBody";//the text insides the sticky
     public static final String noteColor = "noteColor";//the color of the sticky
-    public static final String noteDate = "noteDate";//the time of the sticky
+    public static final String noteTimeHours = "noteTimeHours";//the time Hours of the sticky
+    public static final String noteTimeMinutes = "noteTimeMinutes";//the time Minutes of the sticky
+    public static final String noteTimePmOrAm = "noteTimePmOrAm";//the formt of the sticky
     public static final String noteFontSize = "noteFontSize";//the font size  of the sticky
 
-    public static final int versioncode = 6; // versioncode of the database start from >= 1
+    public static final int versioncode = 7; // versioncode of the database start from >= 1
 
 
     String[] statements = new String[]{
@@ -52,7 +53,9 @@ public class DbController extends SQLiteOpenHelper{
                         this.noteId + " integer primary key, " +
                         this.noteBody + " text, " +
                         this.noteColor + " text, " +
-                        this.noteDate + " text, " +
+                        this.noteTimeMinutes + " text, " +
+                        this.noteTimeHours + " text, " +
+                        this.noteTimePmOrAm + " text, " +
                         this.noteFontSize + " text " +
 
                         ")"
@@ -61,19 +64,21 @@ public class DbController extends SQLiteOpenHelper{
     }
 
 
-    public long insertDataInDb(String noteBody, String noteColor, String noteDate, String noteFontSize){
-        long l = 0;
-
-            SQLiteDatabase sqLiteDatabase = getWritableDatabase();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(this.noteBody, noteBody);
-            contentValues.put(this.noteColor, noteColor);
-            contentValues.put(this.noteDate, noteDate);
-            contentValues.put(this.noteFontSize, noteFontSize);
-            l = sqLiteDatabase.insert(this.tblNotes, null, contentValues);
-
-        return l;
-    }
+//    public long insertDataInDb(String noteBody, String noteColor, String noteDate, String noteFontSize) {
+//        long l = 0;
+//
+//        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+//        ContentValues contentValues = new ContentValues();
+//        contentValues.put(this.noteBody, noteBody);
+//        contentValues.put(this.noteColor, noteColor);
+//        contentValues.put(this.noteTimePmOrAm, no);
+//        contentValues.put(this.noteTimeMinutes noteDate);
+//        contentValues.put(this.noteTimeHours, noteDate);
+//        contentValues.put(this.noteFontSize, noteFontSize);
+//        l = sqLiteDatabase.insert(this.tblNotes, null, contentValues);
+//
+//        return l;
+//    }
 
 
     @Override
@@ -104,11 +109,14 @@ public class DbController extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             do {
                 HashMap<String, String> map = new HashMap<String, String>();
+
                 map.put(this.noteId, cursor.getString(0));
                 map.put(this.noteBody, cursor.getString(1));
                 map.put(this.noteColor, cursor.getString(2));
-                map.put(this.noteDate, cursor.getString(3));
-                map.put(this.noteFontSize, cursor.getString(4));
+                map.put(this.noteTimeMinutes, cursor.getString(3));
+                map.put(this.noteTimeHours, cursor.getString(4));
+                map.put(this.noteTimePmOrAm, cursor.getString(5));
+                map.put(this.noteFontSize, cursor.getString(6));
 
                 arrayList.add(map);
             } while (cursor.moveToNext());

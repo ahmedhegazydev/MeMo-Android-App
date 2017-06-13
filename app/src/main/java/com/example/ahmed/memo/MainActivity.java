@@ -46,11 +46,13 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.ahmed.AlarmRepeating.NotificationReceiver;
+import com.example.ahmed.AlarmRepeating.NotifyAlaramManger;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import db.DBController;
@@ -142,6 +144,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         noteColor = strings[0];//by default the color is white
         addStickyNoteToMainView();
         initLayoutDeletion();
+        //for test
+        //new NotificationReceiver(getApplicationContext()).createNotification();//ok success
 
     }
 
@@ -286,18 +290,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //final int fontSize = Integer.parseInt(hashMap.get(DbController.noteFontSize));
 
                 View view = getLayoutInflater().inflate(R.layout.existing_notes, null);
-                view.setOnClickListener(myClickLit);
-                view.setTag(id + "");
+                View view2 = view.findViewById(R.id.llBla1);
+                //view2.setOnClickListener(myClickLit);
+                //view2.setTag(id + "");
 
-                TextView tvBody = (TextView) view.findViewById(R.id.tvBody);
-                TextView tvDate = (TextView) view.findViewById(R.id.tvDate);
+                TextView tvBody = (TextView) view2.findViewById(R.id.tvBody);
+                tvBody.setOnClickListener(myClickLit);
+                tvBody.setTag(id + "");
+
+                TextView tvDate = (TextView) view2.findViewById(R.id.tvDate);
 
                 tvBody.setText(text);
-                view.setBackgroundColor(Color.parseColor(color));
+                view2.setBackgroundColor(Color.parseColor(color));
                 tvDate.setText(time);
 
 
                 linearLayout.addView(view);
+
 
             }
         }
@@ -513,7 +522,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
 
             ivAddNewNote = (ImageView) view.findViewById(R.id.ll2).findViewById(R.id.ivAddOrBack);
-            TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+            //TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
             view1 = (LinearLayout) view.findViewById(R.id.ll3);
             ivSearch = (ImageView) view.findViewById(R.id.ll4).findViewById(R.id.ivSearchFor);
             ivSearch.setOnClickListener(new View.OnClickListener() {
@@ -550,14 +559,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ivAddNewNote.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    getFormatPmAm();
                     //editting the seleted sticky note
-                    sql = "update " + db.DbController.tblNotes +
-                            " set " +
-                            DBController.noteBody + " = '" + etWritingNotes.getText().toString() + "', " +
-                            DBController.noteColor + " = '" + noteColor + "' " +
-                            "where " +
-                            db.DbController.noteId + " =   '" + idForDb + "' ";
+                    if (remindActive){
+                        sql = "update " + db.DbController.tblNotes +
+                                " set " +
+                                DbController.noteBody + " = '" + etWritingNotes.getText().toString() + "', " +
+                                DbController.noteFontSize + " = '" + etWritingNotes.getTextSize() + "', " +
+                                DbController.noteTimePmOrAm + " = '" + format + "', " +
+                                DbController.noteTimeMinutes + " = '" + minutes + "', " +
+                                DbController.noteTimeHours+ " = '" + hour + "', " +
+                                DbController.noteColor + " = '" + noteColor + "' " +
+                                "where " +
+                                db.DbController.noteId + " =   '" + idForDb + "' ";
+                    }else{
+                        sql = "update " + db.DbController.tblNotes +
+                                " set " +
+                                DbController.noteBody + " = '" + etWritingNotes.getText().toString() + "', " +
+                                DbController.noteFontSize + " = '" + etWritingNotes.getTextSize() + "', " +
+                                DbController.noteTimePmOrAm + " = '" + format + "', " +
+                                DbController.noteTimeMinutes + " = '" + calendar.get(Calendar.MINUTE) + "', " +
+                                DbController.noteTimeHours+ " = '" + calendar.get(Calendar.HOUR) + "', " +
+                                DbController.noteColor + " = '" + noteColor + "' " +
+                                "where " +
+                                db.DbController.noteId + " =   '" + idForDb + "' ";
+                    }
                     DbController.exeQuery(sql);
                     createShortToast("Updated");
 
@@ -589,14 +615,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String noteText = hashMaps.get(0).get(db.DbController.noteBody);
             String noteClr = hashMaps.get(0).get(db.DbController.noteColor);
             String noteFont = hashMaps.get(0).get(db.DbController.noteFontSize);
-            String time = hashMap.get(db.DbController.noteTimeMinutes)+":"+
-                    hashMap.get(db.DbController.noteTimeHours)+":"+
-                    hashMap.get(db.DbController.noteTimePmOrAm);
+            String time = hashMaps.get(0).get(db.DbController.noteTimeMinutes)+":"+
+                    hashMaps.get(0).get(db.DbController.noteTimeHours)+":"+
+                    hashMaps.get(0).get(db.DbController.noteTimePmOrAm);
 
             etWritingNotes.setTextSize(TypedValue.COMPLEX_UNIT_SP, Float.parseFloat(noteFont));
             etWritingNotes.setText(noteText);
             etWritingNotes.setBackgroundColor(Color.parseColor(noteClr));
-
 
             bo2 = false;
 
@@ -675,26 +700,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            if (id == 0) {
-//                createShortToast("menu_alert_dialog");
-//                showPopup(this.relativeLayout, R.menu.menu_alert_dialog);
-//                return true;
-                showOptions(R.layout.options1);
-            }
-            if (id == 1) {
-//                createShortToast("menu_main_layout");
-//                showPopup(this.relativeLayout, R.menu.menu_main_layout);
-//                return true;
-                showOptions(R.layout.options2);
-            }
-        }
-//        return super.onKeyDown(keyCode, event);
-        return true;
-
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_MENU) {
+//            if (id == 0) {
+////                createShortToast("menu_alert_dialog");
+////                showPopup(this.relativeLayout, R.menu.menu_alert_dialog);
+////                return true;
+//                showOptions(R.layout.options1);
+//            }
+//            if (id == 1) {
+////                createShortToast("menu_main_layout");
+////                showPopup(this.relativeLayout, R.menu.menu_main_layout);
+////                return true;
+//                showOptions(R.layout.options2);
+//            }
+//        }
+////        return super.onKeyDown(keyCode, event);
+//        return true;
+//
+//    }
 
     AlertDialog adForOptionsMenu = null;
     AlertDialog.Builder builderOptions = null;
@@ -818,7 +843,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 addRemindMeToNote();
-                setAlarmRepeating(getApplicationContext());
+                //setAlarmRepeating(getApplicationContext());
+                NotifyAlaramManger.setAlaram(context);
             }
         });
 
@@ -841,18 +867,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtras(bundle);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
         //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),600000, pendingIntent);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime(),
-                0,//for 1 minute 1*60*1000 for 2 minutes 2*60*100
-                pendingIntent);
-
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+//                SystemClock.elapsedRealtime(),
+//                ,//for 1 minute 1*60*1000 for 2 minutes 2*60*100
+//                pendingIntent);
+        alarmManager.set(
+                alarmManager.RTC_WAKEUP,
+                new GregorianCalendar().getTimeInMillis()+5*1000,//5 sec
+                PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        );
+        createShortToast("managed");
 
     }
 
     int hour = 0;
     int minutes = 0;
-
-
+    boolean remindActive = false;
     private void addRemindMeToNote() {
 
 
@@ -876,7 +906,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ///////////////////
         llColorAndDate.addView(ivAlermIcon);
         llColorAndDate.addView(tvDate);
-
+        ///////////////////////////////
+        remindActive = true;
 
     }
 
@@ -1022,7 +1053,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     TextView tvBody = (TextView) view2.findViewById(R.id.tvBody);
                     tvBody.setOnClickListener(myClickLit);
-                    tvBody.setTag(id + "");
+                    HashMap<String, String> hm = new HashMap<String, String>();
+                    hm.put("id", id+"");
+                    hm.put("color", color);
+                    tvBody.setTag(hm);
+
 
                     TextView tvDate = (TextView) view2.findViewById(R.id.tvDate);
 
@@ -1048,7 +1083,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ///Toggle the id of menu
                 id = 1;
                 //get the id from the selevted view tag to get the content from the database
-                idForDb = v.getTag().toString();
+                idForDb = ((HashMap<String, String>)v.getTag()).get("id");
+                noteColor = ((HashMap<String, String>)v.getTag()).get("color");
                 noteBody = ((TextView) v).getText().toString();
                 updateSelectedNote();
 

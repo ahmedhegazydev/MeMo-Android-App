@@ -35,15 +35,21 @@ public class NotificationReceiver extends BroadcastReceiver {
     ArrayList<HashMap<String, String>> hashMaps = null;
     DbController dbController = null;
 
+//    public NotificationReceiver(Context context){
+//        this.context = context;
+//        dbController = new DbController(this.context);
+//    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        this.context = context;
         this.intent = intent;
-        dbController = new DbController(this.context);
-        getPassedData();
+        this.context = context;
+        dbController = new DbController(context);
+        //createNotification();
+        //getPassedData();
         getDataFromDbForChecking();
+
 
     }
 
@@ -54,10 +60,14 @@ public class NotificationReceiver extends BroadcastReceiver {
             for (int i = 0; i < hashMaps.size(); i++){
                 String hours = hashMaps.get(i).get(DbController.noteTimeHours);
                 String minutes = hashMaps.get(i).get(DbController.noteTimeMinutes);
-
-//                if (){
+                Calendar calendar1 = Calendar.getInstance();
+                calendar1.set(Calendar.HOUR, Integer.parseInt(hours));
+                calendar1.set(Calendar.MINUTE, Integer.parseInt(minutes));
+                if(calendar1.get(Calendar.HOUR)== calendar.get(Calendar.HOUR) &&
+                        Calendar.getInstance().get(Calendar.MINUTE)== calendar.get(Calendar.MILLISECOND)){
+                    createNotification();
+                }
 //
-//                }
             }
 
         }
@@ -74,7 +84,7 @@ public class NotificationReceiver extends BroadcastReceiver {
         Toast.makeText(context, s, lengthShort).show();
     }
 
-    private void createNotification() {
+    public void createNotification() {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this.context);
         mBuilder.setContentTitle("New Message");
@@ -96,6 +106,8 @@ public class NotificationReceiver extends BroadcastReceiver {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+        mBuilder.setDefaults(NotificationCompat.DEFAULT_SOUND);
+
         mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         /* notificationID allows you to update the notification later on. */
